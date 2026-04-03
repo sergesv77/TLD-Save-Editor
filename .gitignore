@@ -4,3 +4,9 @@
 *.user
 The Long Dark Save Editor 2/bin/
 The Long Dark Save Editor 2/obj/
+The Long Dark Save Editor 2/*_wpftmp.csproj
+__pycache__/
+*.pyc
+___* insights by CODEX.md
+todo.txt
+Episode5-Validation-Checklist.md

@@ -6,6 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         d:DesignHeight="478" d:DesignWidth="882"
+        Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <Image x:Key="CoastalRegion" Source="../Images/CoastalHighwaySF.png"/>
@@ -46,7 +47,7 @@
             </Canvas>
         </Viewbox>
         <Grid Width="{Binding ActualWidth, ElementName=canvas, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=canvas, Mode=OneWay}" d:IsHidden="True">
-			<TextBlock x:Name="canvasLabel" Style="{StaticResource MaterialDesignHeadline2TextBlock}" Foreground="{StaticResource MaterialDesignBody}" HorizontalAlignment="Center" VerticalAlignment="Center"><Run Text="asdasd"/></TextBlock>
+			<TextBlock x:Name="canvasLabel" Style="{StaticResource MaterialDesignHeadline2TextBlock}" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" VerticalAlignment="Center"><Run Text="asdasd"/></TextBlock>
         </Grid>
     </Canvas>
 </UserControl>

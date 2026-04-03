@@ -1265,9 +1265,6 @@
   <data name="SnowWalkerProgress" xml:space="preserve">
     <value>Fortschritte beim Schneewanderer</value>
   </data>
-  <data name="TestBranch" xml:space="preserve">
-    <value>Testzweig</value>
-  </data>
   <data name="Thirst" xml:space="preserve">
     <value>Durst</value>
   </data>
@@ -1275,7 +1272,7 @@
     <value>Entwicklungszeit (Stunden)</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>The Long Dark (v2.27) Editor speichern</value>
+    <value>The Long Dark (v2.52.180167 S) Editor speichern</value>
   </data>
   <data name="Tools" xml:space="preserve">
     <value>Werkzeuge</value>

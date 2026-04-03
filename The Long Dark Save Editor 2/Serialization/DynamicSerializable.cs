@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using The_Long_Dark_Save_Editor_2.Helpers;
 
@@ -15,8 +16,11 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
     {
 
         private static JsonLoadSettings jsonLoadSettings = new JsonLoadSettings() { LineInfoHandling = LineInfoHandling.Ignore };
+        private static readonly IEqualityComparer<object> referenceComparer = new ReferenceComparer();
 
-        private Dictionary<object, List<KeyValuePair<string, JToken>>> extraFields = new Dictionary<object, List<KeyValuePair<string, JToken>>>();
+        private Dictionary<object, List<KeyValuePair<string, JToken>>> extraFields = new Dictionary<object, List<KeyValuePair<string, JToken>>>(referenceComparer);
+        private Dictionary<object, HashSet<string>> presentFields = new Dictionary<object, HashSet<string>>(referenceComparer);
+        private Dictionary<Type, object> defaultObjects = new Dictionary<Type, object>();
         public T Obj { get; private set; }
 
         public DynamicSerializable(string json)
@@ -101,6 +105,7 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
         private object ParseObject(JObject obj, Type t)
         {
             var result = Activator.CreateInstance(t);
+            var present = new HashSet<string>();
             var props = t.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                  .Where(p => p.GetCustomAttributeCached<JsonIgnoreAttribute>(false) == null)
                 .ToDictionary(p => MemberToName(p));
@@ -112,6 +117,7 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
             {
                 if (props.ContainsKey(child.Key))
                 {
+                    present.Add(child.Key);
                     var prop = props[child.Key];
                     var attr = prop.GetCustomAttributeCached<DeserializeAttribute>(false);
                     var childType = prop.PropertyType;
@@ -120,6 +126,7 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
                 }
                 else if (fields.ContainsKey(child.Key))
                 {
+                    present.Add(child.Key);
                     var field = fields[child.Key];
                     var attr = field.GetCustomAttributeCached<DeserializeAttribute>(false);
                     var childType = field.FieldType;
@@ -133,6 +140,7 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
                     extraFields[result].Add(child);
                 }
             }
+            presentFields[result] = present;
             return result;
         }
 
@@ -164,11 +172,16 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
 
         public string Serialize()
         {
-            var res = ReconstructObject(Obj);
+            var res = ReconstructObject(Obj, false, true);
             return JsonConvert.SerializeObject(res);
         }
 
         public object Reconstruct(object o, DeserializeAttribute attr = null)
+        {
+            return Reconstruct(o, attr, false, true);
+        }
+
+        private object Reconstruct(object o, DeserializeAttribute attr, bool includeAbsentFields, bool includeExtraFields)
         {
             object result = null;
             if (o == null)
@@ -182,11 +195,11 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
                 }
                 else if (o is IDictionary)
                 {
-                    result = ReconstructDictionary((IDictionary)o, attr?.JsonItems ?? false);
+                    result = ReconstructDictionary((IDictionary)o, attr?.JsonItems ?? false, includeAbsentFields, includeExtraFields);
                 }
                 else if (o is ICollection || ReflectionUtil.ImplementsGenericInterface(o.GetType(), typeof(ICollection<>)))
                 {
-                    result = ReconstructCollection(o, attr?.JsonItems ?? false);
+                    result = ReconstructCollection(o, attr?.JsonItems ?? false, includeAbsentFields, includeExtraFields);
                 }
                 else if (o.GetType().IsGenericType && o.GetType().GetGenericTypeDefinition() == typeof(EnumWrapper<>))
                 {
@@ -194,7 +207,7 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
                 }
                 else
                 {
-                    result = ReconstructObject(o);
+                    result = ReconstructObject(o, includeAbsentFields, includeExtraFields);
                 }
             }
 
@@ -204,6 +217,11 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
         }
 
         public object ReconstructObject(object o)
+        {
+            return ReconstructObject(o, false, true);
+        }
+
+        private object ReconstructObject(object o, bool includeAbsentFields, bool includeExtraFields)
         {
             var res = new Dictionary<string, dynamic>();
             var t = o.GetType();
@@ -216,15 +234,19 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
             {
                 var attr = prop.GetCustomAttributeCached<DeserializeAttribute>(false);
                 var name = attr?.From ?? prop.Name;
-                res.Add(name, Reconstruct(prop.GetValue(o), attr));
+                var value = prop.GetValue(o);
+                if (ShouldSerializeMember(o, prop, name, value, includeAbsentFields))
+                    res.Add(name, Reconstruct(value, attr, includeAbsentFields, includeExtraFields));
             }
             foreach (var field in fields)
             {
                 var attr = field.GetCustomAttributeCached<DeserializeAttribute>(false);
                 var name = attr?.From ?? field.Name;
-                res.Add(name, Reconstruct(field.GetValue(o), attr));
+                var value = field.GetValue(o);
+                if (ShouldSerializeMember(o, field, name, value, includeAbsentFields))
+                    res.Add(name, Reconstruct(value, attr, includeAbsentFields, includeExtraFields));
             }
-            if (extraFields.ContainsKey(o))
+            if (includeExtraFields && extraFields.ContainsKey(o))
             {
                 foreach (var kvp in extraFields[o])
                 {
@@ -234,7 +256,7 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
             return res;
         }
 
-        public dynamic ReconstructCollection(dynamic col, bool serializeItems)
+        public dynamic ReconstructCollection(dynamic col, bool serializeItems, bool includeAbsentFields, bool includeExtraFields)
         {
             if (col.GetType() == typeof(byte[]))
             {
@@ -243,19 +265,68 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
             var result = new List<object>();
             foreach (var item in col)
             {
-                result.Add(Reconstruct(item, new DeserializeAttribute(null, serializeItems)));
+                result.Add(Reconstruct(item, new DeserializeAttribute(null, serializeItems), includeAbsentFields, includeExtraFields));
             }
             return result.ToArray();
         }
 
-        public IDictionary ReconstructDictionary(IDictionary dict, bool serializeItems)
+        public IDictionary ReconstructDictionary(IDictionary dict, bool serializeItems, bool includeAbsentFields, bool includeExtraFields)
         {
             var res = new Dictionary<object, object>();
             foreach (var key in dict.Keys)
             {
-                res.Add(Reconstruct(key), Reconstruct(dict[key], new DeserializeAttribute(null, serializeItems)));
+                res.Add(Reconstruct(key, null, includeAbsentFields, includeExtraFields), Reconstruct(dict[key], new DeserializeAttribute(null, serializeItems), includeAbsentFields, includeExtraFields));
             }
             return res;
+        }
+
+        private bool ShouldSerializeMember(object owner, MemberInfo member, string name, object value, bool includeAbsentFields)
+        {
+            if (includeAbsentFields || !presentFields.ContainsKey(owner))
+                return true;
+
+            if (presentFields[owner].Contains(name))
+                return true;
+
+            return ValueDiffersFromDefault(owner.GetType(), member, value);
+        }
+
+        private bool ValueDiffersFromDefault(Type ownerType, MemberInfo member, object value)
+        {
+            var defaultValue = GetMemberValue(member, GetDefaultObject(ownerType));
+            return !ComparisonValueEquals(value, defaultValue);
+        }
+
+        private object GetDefaultObject(Type t)
+        {
+            if (!defaultObjects.ContainsKey(t))
+                defaultObjects[t] = Activator.CreateInstance(t);
+            return defaultObjects[t];
+        }
+
+        private object GetMemberValue(MemberInfo member, object target)
+        {
+            if (member is PropertyInfo)
+                return ((PropertyInfo)member).GetValue(target);
+            if (member is FieldInfo)
+                return ((FieldInfo)member).GetValue(target);
+            throw new Exception("Unsupported member type " + member.GetType().FullName);
+        }
+
+        private bool ComparisonValueEquals(object left, object right)
+        {
+            var leftToken = CreateComparisonToken(left);
+            var rightToken = CreateComparisonToken(right);
+            return JToken.DeepEquals(leftToken, rightToken);
+        }
+
+        private JToken CreateComparisonToken(object value)
+        {
+            if (value == null)
+                return JValue.CreateNull();
+
+            var comparisonValue = Reconstruct(value, null, true, false);
+            return comparisonValue == null ? JValue.CreateNull() : JToken.FromObject(comparisonValue);
         }
 
         private string MemberToName(MemberInfo m)
@@ -264,6 +335,19 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
             if (attr != null)
                 return attr.From;
             return m.Name;
+        }
+
+        private class ReferenceComparer : IEqualityComparer<object>
+        {
+            public new bool Equals(object x, object y)
+            {
+                return ReferenceEquals(x, y);
+            }
+
+            public int GetHashCode(object obj)
+            {
+                return RuntimeHelpers.GetHashCode(obj);
+            }
         }
 
     }

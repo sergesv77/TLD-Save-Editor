@@ -22,7 +22,7 @@ namespace The_Long_Dark_Save_Editor_2
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         public static MainWindow Instance { get; set; }
-        public static VersionData Version { get { return new VersionData() { version = "2.19" }; } }
+        public static VersionData Version { get { return new VersionData() { version = "2.20" }; } }
 
         private GameSave currentSave;
         public GameSave CurrentSave { get { return currentSave; } set { SetPropertyField(ref currentSave, value); } }
@@ -34,18 +34,6 @@ namespace The_Long_Dark_Save_Editor_2
             set { SetPropertyField(ref currentProfile, value); }
         }
 
-        private bool testBranch;
-        public bool TestBranch
-        {
-            get { return testBranch; }
-            set
-            {
-                Properties.Settings.Default.TestBranch = value;
-                SetPropertyField(ref testBranch, value);
-                UpdateSaves();
-            }
-        }
-
         public bool IsDebug { get; set; }
 
         private ObservableCollection<EnumerationMember> saves;
@@ -54,6 +42,14 @@ namespace The_Long_Dark_Save_Editor_2
         {
             get { return saves; }
             set { SetPropertyField(ref saves, value); }
+        }
+
+        private ObservableCollection<EnumerationMember> themeOptions;
+
+        public ObservableCollection<EnumerationMember> ThemeOptions
+        {
+            get { return themeOptions; }
+            set { SetPropertyField(ref themeOptions, value); }
         }
 
         private FileSystemWatcher appDataFileWatcher;
@@ -80,12 +76,19 @@ namespace The_Long_Dark_Save_Editor_2
             appDataFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
             appDataFileWatcher.Changed += new FileSystemEventHandler(SaveFileChanged);
 
+            ThemeOptions = new ObservableCollection<EnumerationMember>
+            {
+                new EnumerationMember { Description = "System", Value = EditorThemePreference.System.ToString() },
+                new EnumerationMember { Description = "White", Value = EditorThemePreference.White.ToString() },
+                new EnumerationMember { Description = "Dark", Value = EditorThemePreference.Dark.ToString() },
+            };
+
             this.DataContext = this;
             Instance = this;
             InitializeComponent();
-
-            TestBranch = Properties.Settings.Default.TestBranch;
             Title += " " + Version.ToString();
+            ccTheme.SelectedValue = App.ParseThemePreference(Properties.Settings.Default.ThemePreference).ToString();
+            UpdateSaves();
 
         }
 
@@ -100,7 +103,6 @@ namespace The_Long_Dark_Save_Editor_2
             if (!Properties.Settings.Default.BugReportWarningShown)
             {
                 System.Windows.MessageBox.Show("DO NOT report any in-game bugs to Hinterland if you have edited your save. Bugs might be caused by the save editor. Only report bugs if you are able to reproduce them in fresh unedited save.");
-                //System.Windows.MessageBox.Show("If you don't have test branch version of the game, untick the toggle button at top right corner.");
 
                 Properties.Settings.Default.BugReportWarningShown = true;
                 Properties.Settings.Default.Save();
@@ -139,45 +141,48 @@ namespace The_Long_Dark_Save_Editor_2
 
         private void UpdateSaves()
         {
-            var path = Path.Combine(Util.GetLocalPath(), testBranch ? "HinterlandTest2" : "Hinterland", "TheLongDark", "Survival");
-            Debug.WriteLine(path);
+            var saveDirectories = GetSaveDirectories();
+            Debug.WriteLine(string.Join(", ", saveDirectories));
 
-            if (Directory.Exists(path))
-            {
-                appDataFileWatcher.Path = path;
-                appDataFileWatcher.EnableRaisingEvents = true;
-            }
-
-            Saves = Util.GetSaveFiles(path);
+            Saves = Util.GetSaveFiles(saveDirectories);
 
             if (CurrentSave != null)
             {
                 var save = Saves.FirstOrDefault(s => s.Value.ToString() == CurrentSave.path);
                 if (save != null)
                     ccSaves.SelectedItem = save;
+                else if (Saves.Count == 0)
+                    CurrentSave = null;
+                else
+                    ccSaves.SelectedIndex = 0;
             }
             else if (Saves.Count == 0)
                 CurrentSave = null;
             else
                 ccSaves.SelectedIndex = 0;
 
-            if (Directory.Exists(path))
+            UpdateSaveWatcher(CurrentSave?.path);
+
+            CurrentProfile = null;
+            Exception profileLoadException = null;
+            foreach (var profilePath in Util.GetProfileFiles(saveDirectories))
             {
-                var profile = Directory.GetFiles(path, "user001.*")
-                                .Select(file => new FileInfo(file))
-                                .OrderByDescending(file => file.LastWriteTime)
-                                .FirstOrDefault()?.FullName;
-                if (profile != null)
+                try
                 {
-                    try
-                    {
-                        CurrentProfile = new Profile(profile);
-                    }
-                    catch (Exception ex)
-                    {
-                        WForms.MessageBox.Show(ex.Message + "\nFailed to load profile\n" + ex.ToString(), "Failed to load profile", WForms.MessageBoxButtons.OK, WForms.MessageBoxIcon.Exclamation);
-                    }
+                    CurrentProfile = new Profile(profilePath);
+                    profileLoadException = null;
+                    break;
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    profileLoadException = ex;
+                }
+            }
+
+            if (CurrentProfile == null && profileLoadException != null)
+            {
+                WForms.MessageBox.Show(profileLoadException.Message + "\nFailed to load profile\n" + profileLoadException, "Failed to load profile", WForms.MessageBoxButtons.OK, WForms.MessageBoxIcon.Exclamation);
             }
 
         }
@@ -247,7 +252,7 @@ namespace The_Long_Dark_Save_Editor_2
 
         public void CurrentSaveSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ccSaves == null && ccSaves.SelectedValue == null)
+            if (ccSaves == null || ccSaves.SelectedValue == null)
                 return;
 
             if (ccSaves.SelectedValue != null)
@@ -257,6 +262,23 @@ namespace The_Long_Dark_Save_Editor_2
             }
         }
 
+        private void ThemeSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ccTheme == null || ccTheme.SelectedValue == null)
+                return;
+
+            var themePreference = App.ParseThemePreference(ccTheme.SelectedValue.ToString());
+            var themePreferenceName = themePreference.ToString();
+
+            if (!string.Equals(Properties.Settings.Default.ThemePreference, themePreferenceName, StringComparison.Ordinal))
+            {
+                Properties.Settings.Default.ThemePreference = themePreferenceName;
+                Properties.Settings.Default.Save();
+            }
+
+            ((App)Application.Current).ApplyThemePreference(themePreference);
+        }
+
         private void SetSave(string path)
         {
             try
@@ -264,6 +286,7 @@ namespace The_Long_Dark_Save_Editor_2
                 var save = new GameSave();
                 save.LoadSave(path);
                 CurrentSave = save;
+                UpdateSaveWatcher(path);
             }
             catch (Exception ex)
             {
@@ -290,8 +313,14 @@ namespace The_Long_Dark_Save_Editor_2
 
         private void OpenBackupsClicked(object sender, RoutedEventArgs e)
         {
-            var path = Path.Combine(Util.GetLocalPath(), testBranch ? "HinterlandTest2" : "Hinterland", "TheLongDark", "Survival", "backups");
-            Process.Start(path);
+            var path = CurrentSave != null
+                ? Path.Combine(Path.GetDirectoryName(CurrentSave.path), "backups")
+                : GetSaveDirectories().Select(directory => Path.Combine(directory, "backups")).FirstOrDefault(Directory.Exists);
+
+            if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+                Process.Start(path);
+            else
+                WForms.MessageBox.Show("No backups directory was found for the current save layout.", "Backups not found", WForms.MessageBoxButtons.OK, WForms.MessageBoxIcon.Information);
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -317,6 +346,27 @@ namespace The_Long_Dark_Save_Editor_2
                 dialogHost.DialogContent = new SaveFileUpdatedViewModel();
                 dialogHost.IsOpen = true;
                 this.currentSaveChanged = false;
+            }
+        }
+
+        private List<string> GetSaveDirectories()
+        {
+            var gameFolder = Path.Combine(Util.GetLocalPath(), "Hinterland", "TheLongDark");
+            return Util.GetSaveDirectories(gameFolder);
+        }
+
+        private void UpdateSaveWatcher(string selectedSavePath)
+        {
+            appDataFileWatcher.EnableRaisingEvents = false;
+
+            var watcherPath = !string.IsNullOrEmpty(selectedSavePath)
+                ? Path.GetDirectoryName(selectedSavePath)
+                : GetSaveDirectories().FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(watcherPath) && Directory.Exists(watcherPath))
+            {
+                appDataFileWatcher.Path = watcherPath;
+                appDataFileWatcher.EnableRaisingEvents = true;
             }
         }
     }

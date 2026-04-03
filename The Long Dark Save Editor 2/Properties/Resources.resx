@@ -1257,9 +1257,6 @@
   <data name="SnowWalkerProgress" xml:space="preserve">
     <value>Snow walker progress</value>
   </data>
-  <data name="TestBranch" xml:space="preserve">
-    <value>Test branch</value>
-  </data>
   <data name="Thirst" xml:space="preserve">
     <value>Thirst</value>
   </data>
@@ -1267,7 +1264,7 @@
     <value>Time spent evolving (hours)</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>The Long Dark (v2.27) Save Editor</value>
+    <value>The Long Dark (v2.52.180167 S) Save Editor</value>
   </data>
   <data name="Tools" xml:space="preserve">
     <value>Tools</value>
@@ -1952,5 +1949,59 @@
   </data>
   <data name="GEAR_TechnicalBackpack" xml:space="preserve">
     <value>Technical Backpack</value>
+  </data>
+  <data name="GEAR_TacticalGloves" xml:space="preserve">
+    <value>Tactical Gloves</value>
+  </data>
+  <data name="GEAR_BackerNote1B" xml:space="preserve">
+    <value>Backer Note 1B</value>
+  </data>
+  <data name="GEAR_BackerNote4A" xml:space="preserve">
+    <value>Backer Note 4A</value>
+  </data>
+  <data name="GEAR_CashBundle" xml:space="preserve">
+    <value>Cash Bundle</value>
+  </data>
+  <data name="GEAR_ClipBoard_EP5DrLarsen" xml:space="preserve">
+    <value>Dr. Larsen's Clipboard</value>
+  </data>
+  <data name="GEAR_Ep4SawFarmNote" xml:space="preserve">
+    <value>Saw Farm Note</value>
+  </data>
+  <data name="GEAR_Ep5PMillsClinicKey" xml:space="preserve">
+    <value>Perseverance Mills Clinic Key</value>
+  </data>
+  <data name="GEAR_Ep5PMillsClinicKeyNote01" xml:space="preserve">
+    <value>Clinic Key Note</value>
+  </data>
+  <data name="GEAR_Ep5PMillsClinicLetterToConstable01" xml:space="preserve">
+    <value>Clinic Letter to the Constable</value>
+  </data>
+  <data name="GEAR_Ep5PMillsClinicMorgueDoor01" xml:space="preserve">
+    <value>Clinic Morgue Door</value>
+  </data>
+  <data name="GEAR_Ep5PMillsClinicMorgueKey" xml:space="preserve">
+    <value>Perseverance Mills Clinic Morgue Key</value>
+  </data>
+  <data name="GEAR_Ep5PMillsClinicScansReport01" xml:space="preserve">
+    <value>Clinic Scans Report</value>
+  </data>
+  <data name="GEAR_Ep5PMillsConstableAutopsyReport01" xml:space="preserve">
+    <value>Constable Autopsy Report</value>
+  </data>
+  <data name="GEAR_Ep5PMillsConstableLogBook" xml:space="preserve">
+    <value>Constable's Log Book</value>
+  </data>
+  <data name="GEAR_Ep5PMillsConstableMissingPersonLetter01" xml:space="preserve">
+    <value>Missing Person Letter</value>
+  </data>
+  <data name="GEAR_Ep5PMillsConstablesGunLockerKey" xml:space="preserve">
+    <value>Constable's Gun Locker Key</value>
+  </data>
+  <data name="GEAR_Ep5PMillsCoopPrescription01" xml:space="preserve">
+    <value>Co-op Prescription</value>
+  </data>
+  <data name="GEAR_MiltonParkNotice" xml:space="preserve">
+    <value>Milton Park Notice</value>
   </data>
 </root>

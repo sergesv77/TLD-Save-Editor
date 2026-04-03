@@ -37,18 +37,6 @@ namespace The_Long_Dark_Save_Editor_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool TestBranch {
-            get {
-                return ((bool)(this["TestBranch"]));
-            }
-            set {
-                this["TestBranch"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("null")]
         public string Language {
             get {
@@ -56,6 +44,18 @@ namespace The_Long_Dark_Save_Editor_2.Properties {
             }
             set {
                 this["Language"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("System")]
+        public string ThemePreference {
+            get {
+                return ((string)(this["ThemePreference"]));
+            }
+            set {
+                this["ThemePreference"] = value;
             }
         }
     }

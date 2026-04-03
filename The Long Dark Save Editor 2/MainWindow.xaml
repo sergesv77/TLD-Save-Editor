@@ -15,11 +15,12 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="{x:Static p:Resources.Title}" Height="600" Width="900" 
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
-        Background="{DynamicResource MaterialDesignPaper}"
+        Background="{DynamicResource AppShellBackgroundBrush}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Loaded="Window_Loaded" Closing="Window_Closing" Activated="TheWindow_Activated">
 
@@ -68,7 +69,7 @@
             <TextBlock>Test</TextBlock>
         </materialDesign:DialogHost.DialogContent>
 
-        <Grid>
+        <Grid Background="{DynamicResource AppShellBackgroundBrush}">
             <DockPanel>
             <Grid DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
@@ -81,64 +82,66 @@
                     <Button Margin="10 0 0 0" Click="RefreshClicked" Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Content="{x:Static p:Resources.Refresh}" Height="40"/>
                     <Button Margin="10 0 0 0" Click="OpenBackupsClicked" Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Content="{x:Static p:Resources.Backups}" Height="40"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0 0 20 0">
-                    <Button Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Foreground="#7289DA" Click="JoinDiscordClicked" Height="40">
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0 0 20 0" VerticalAlignment="Center">
+                    <TextBlock Margin="0 0 8 0" VerticalAlignment="Center">Theme</TextBlock>
+                    <ComboBox Name="ccTheme" Margin="0 0 16 0" Width="120" Height="32"
+                              ItemsSource="{Binding ThemeOptions}" DisplayMemberPath="Description" SelectedValuePath="Value"
+                              SelectionChanged="ThemeSelectionChanged" VerticalAlignment="Center"/>
+                    <Button Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Click="JoinDiscordClicked" Height="40">
                         <StackPanel Orientation="Horizontal">
 								<materialDesign:PackIcon Kind="Chat" Width="18" Height="18" />
                             <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Discord group</TextBlock>
                         </StackPanel>
                     </Button>
-                    <Button Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Foreground="#211F1F" Click="ViewOnGitHubClicked" Height="40">
+                    <Button Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Click="ViewOnGitHubClicked" Height="40">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Github" Height="20" Width="20" />
                             <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">View on GitHub</TextBlock>
                         </StackPanel>
                     </Button>
-                    <!--<Label Margin="10 0 0 0" VerticalAlignment="Center" Content="{x:Static p:Resources.TestBranch}"/>
-                    <ToggleButton Margin="5 0 0 0" IsChecked="{Binding TestBranch, Mode=TwoWay}" Style="{StaticResource MaterialDesignSwitchToggleButton}"/>-->
                 </StackPanel>
             </Grid>
-            <Rectangle DockPanel.Dock="Top" Fill="#A6B8C3" Height="1" ></Rectangle>
-                <dragablz:TabablzControl Name="tabPanel"  DockPanel.Dock="Bottom" FixedHeaderCount="7">
+            <Rectangle DockPanel.Dock="Top" Fill="{DynamicResource AppShellDividerBrush}" Height="1" ></Rectangle>
+                <dragablz:TabablzControl Name="tabPanel" Background="{DynamicResource AppShellBackgroundBrush}" DockPanel.Dock="Bottom" FixedHeaderCount="7">
                     <TabItem Header="{x:Static p:Resources.Profile}">
                         <StackPanel IsEnabled="{Binding CurrentProfile, Converter={StaticResource ObjectNotNullConverter}}" >
-                            <Rectangle Fill="#A6B8C3" Height="1" />
+                            <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" />
                             <tabs:ProfileTab />
                         </StackPanel>
                     </TabItem>
                     <TabItem Header="{x:Static p:Resources.Player}">
                         <StackPanel IsEnabled="{Binding CurrentSave, Converter={StaticResource ObjectNotNullConverter}}" >
-                            <Rectangle Fill="#A6B8C3" Height="1" ></Rectangle>
+                            <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" ></Rectangle>
                             <tabs:PlayerTab />
                         </StackPanel>
                     </TabItem>
                     <TabItem Header="{x:Static p:Resources.Map}">
                         <DockPanel IsEnabled="{Binding CurrentSave, Converter={StaticResource ObjectNotNullConverter}}">
-                            <Rectangle Fill="#A6B8C3" Height="1" DockPanel.Dock="Top"></Rectangle>
+                            <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" DockPanel.Dock="Top"></Rectangle>
                             <tabs:MapTab  DockPanel.Dock="Top"/>
                         </DockPanel>
                     </TabItem>
                     <TabItem Header="{x:Static p:Resources.Skills}">
                         <StackPanel IsEnabled="{Binding CurrentSave, Converter={StaticResource ObjectNotNullConverter}}">
-                            <Rectangle Fill="#A6B8C3" Height="1" ></Rectangle>
+                            <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" ></Rectangle>
                             <tabs:SkillsTab />
                         </StackPanel>
                     </TabItem>
                     <TabItem Header="{x:Static p:Resources.Injuries}">
                         <DockPanel IsEnabled="{Binding CurrentSave, Converter={StaticResource ObjectNotNullConverter}}">
-                            <Rectangle Grid.Row="0" Fill="#A6B8C3" Height="1" DockPanel.Dock="Top"></Rectangle>
+                            <Rectangle Grid.Row="0" Fill="{DynamicResource AppShellDividerBrush}" Height="1" DockPanel.Dock="Top"></Rectangle>
                             <tabs:InjuriesTab Grid.Row="1"/>
                         </DockPanel>
                     </TabItem>
                     <TabItem Header="{x:Static p:Resources.Inventory}">
                         <DockPanel IsEnabled="{Binding CurrentSave, Converter={StaticResource ObjectNotNullConverter}}">
-                            <Rectangle Fill="#A6B8C3" Height="1" DockPanel.Dock="Top"></Rectangle>
+                            <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" DockPanel.Dock="Top"></Rectangle>
                             <tabs:InventoryTab />
                         </DockPanel>
                     </TabItem>
                     <TabItem Header="{x:Static p:Resources.About}">
                         <StackPanel>
-                            <Rectangle Fill="#A6B8C3" Height="1" ></Rectangle>
+                            <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" ></Rectangle>
                             <tabs:AboutTab />
                         </StackPanel>
                     </TabItem>

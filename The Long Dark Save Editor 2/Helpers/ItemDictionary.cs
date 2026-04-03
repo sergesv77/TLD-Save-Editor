@@ -105,6 +105,7 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
             AddItemInfo("GEAR_SkiBoots", ItemCategory.Clothing, @"{""ClothingItem"": {}}");
             AddItemInfo("GEAR_SkiGloves", ItemCategory.Clothing, @"{""ClothingItem"": {}}");
             AddItemInfo("GEAR_SkiJacket", ItemCategory.Clothing, @"{""ClothingItem"": {}}");
+            AddItemInfo("GEAR_TacticalGloves", ItemCategory.Clothing, @"{""ClothingItem"": {}}");
             AddItemInfo("GEAR_TeeShirt", ItemCategory.Clothing, @"{""ClothingItem"": {}}");
             AddItemInfo("GEAR_Toque", ItemCategory.Clothing, @"{""ClothingItem"": {}}");
             AddItemInfo("GEAR_WolfSkinCape", ItemCategory.Clothing, @"{""ClothingItem"": {}}");
@@ -374,6 +375,10 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
             AddItemInfo("GEAR_FixedRifle", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_BankVaultCode", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_BackerNote1C", ItemCategory.Collectible, @"{}", true);
+            AddItemInfo("GEAR_BackerNote1B", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_BackerNote4A", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_CashBundle", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_ClipBoard_EP5DrLarsen", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_DamFenceKey", ItemCategory.Collectible, @"{}", true);
             AddItemInfo("GEAR_AuroraHatchCode", ItemCategory.Collectible, @"{}", true);
             AddItemInfo("GEAR_KnowledgeCarterDam", ItemCategory.Collectible, @"{}", true);
@@ -423,6 +428,7 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
             AddItemInfo("GEAR_MiltonFlareGunNote", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_MiltonLetter1", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_MiltonLetter2", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_MiltonParkNotice", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_MiltonPostOfficeCollectible1", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_MiltonStoreNotice", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_NoteMCU", ItemCategory.Collectible, @"{}");
@@ -453,6 +459,18 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
             AddItemInfo("GEAR_Ep3HallFlyer", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_Ep3Rosary", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_Ep3TomsMap", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep4SawFarmNote", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsClinicKey", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsClinicKeyNote01", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsClinicLetterToConstable01", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsClinicMorgueDoor01", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsClinicMorgueKey", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsClinicScansReport01", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsConstableAutopsyReport01", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsConstableLogBook", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsConstableMissingPersonLetter01", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsConstablesGunLockerKey", ItemCategory.Collectible, @"{}");
+            AddItemInfo("GEAR_Ep5PMillsCoopPrescription01", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_KnowledgePVbook1", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_KnowledgePVbook2", ItemCategory.Collectible, @"{}");
             AddItemInfo("GEAR_KnowledgePVbook3", ItemCategory.Collectible, @"{}");

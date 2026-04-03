@@ -20,6 +20,8 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
     public static class Util
     {
         private static readonly object IsDebug;
+        private static readonly Regex SaveFileRegex = new Regex(@"^(?:(?:ep[0-9])?(?:sandbox|challenge|story|relentless|autosave|checkpoint)[0-9]+|quicksave)$", RegexOptions.IgnoreCase);
+        private static readonly string[] ProfilePatterns = new[] { "profile_survival.*", "user001.*" };
 
         public static T DeserializeObject<T>(string json) where T : class
         {
@@ -44,13 +46,37 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
             return JsonConvert.SerializeObject(o);
         }
 
+        public static List<string> GetSaveDirectories(string gameFolder)
+        {
+            var directories = new List<string>();
+            if (string.IsNullOrEmpty(gameFolder))
+                return directories;
+
+            foreach (var directory in new[] { gameFolder, Path.Combine(gameFolder, "Survival") })
+            {
+                if (Directory.Exists(directory))
+                    directories.Add(directory);
+            }
+
+            return directories;
+        }
+
         public static ObservableCollection<EnumerationMember> GetSaveFiles(string folder)
         {
+            return GetSaveFiles(new[] { folder });
+        }
 
-            Regex reg = new Regex("^(ep[0-9])?(sandbox|challenge|story|relentless)[0-9]+$");
-            var saves = new List<string>();
-            if (Directory.Exists(folder))
-                saves.AddRange((from f in Directory.GetFiles(folder) orderby new FileInfo(f).LastWriteTime descending where reg.IsMatch(Path.GetFileName(f)) select f).ToList<string>());
+        public static ObservableCollection<EnumerationMember> GetSaveFiles(IEnumerable<string> folders)
+        {
+            var saves = folders
+                .Where(Directory.Exists)
+                .SelectMany(folder => Directory.GetFiles(folder))
+                .Where(file => SaveFileRegex.IsMatch(Path.GetFileName(file)))
+                .Select(file => new FileInfo(file))
+                .OrderByDescending(file => file.LastWriteTime)
+                .Select(file => file.FullName)
+                .Distinct()
+                .ToList();
 
             var result = new ObservableCollection<EnumerationMember>();
             foreach (string saveFile in saves)
@@ -68,6 +94,18 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
             }
 
             return result;
+        }
+
+        public static List<string> GetProfileFiles(IEnumerable<string> folders)
+        {
+            return folders
+                .Where(Directory.Exists)
+                .SelectMany(folder => ProfilePatterns.SelectMany(pattern => Directory.GetFiles(folder, pattern)))
+                .Distinct()
+                .Select(file => new FileInfo(file))
+                .OrderByDescending(file => file.LastWriteTime)
+                .Select(file => file.FullName)
+                .ToList();
         }
 
         private static EnumerationMember CreateSaveEnumerationMember(string file, string name)

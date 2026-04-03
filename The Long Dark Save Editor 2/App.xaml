@@ -24,9 +24,11 @@
                     <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="{StaticResource Primary500Foreground}"/>
                     <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="{StaticResource Primary700}"/>
                     <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="{StaticResource Primary700Foreground}"/>
-                    <SolidColorBrush x:Key="MaterialDesignPaper" Color="White" />
-                    <SolidColorBrush x:Key="MaterialDesignBody" Color="#303030" />
-
+                    <SolidColorBrush x:Key="AppShellBackgroundBrush" Color="#EEF1F3" />
+                    <SolidColorBrush x:Key="AppShellDividerBrush" Color="#A6B8C3" />
+                    <SolidColorBrush x:Key="AppChromeIdleBrush" Color="#4A6073" />
+                    <SolidColorBrush x:Key="AppChromeSelectedFillBrush" Color="#526C80" />
+                    <SolidColorBrush x:Key="AppChromeSelectedTextBrush" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="SecondaryAccentBrush" Color="{StaticResource Accent200}"/>
                     <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{StaticResource Accent200Foreground}"/>
                 </ResourceDictionary>
@@ -48,8 +50,8 @@
 
             <Style x:Key="CMaterialDesignDragableTabItemStyle"  TargetType="{x:Type dragablz:DragablzItem}" BasedOn="{StaticResource MaterialDesignDragableTabItemStyle}">
                 <Setter Property="FocusVisualStyle" Value="{StaticResource MaterialDesignFocusVisual}"/>
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
-                <Setter Property="dragablzThemes:MaterialDesignAssist.IndicatorBrush" Value="{StaticResource PrimaryHueMidBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource AppChromeIdleBrush}"/>
+                <Setter Property="dragablzThemes:MaterialDesignAssist.IndicatorBrush" Value="{DynamicResource AppChromeSelectedFillBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type dragablz:DragablzItem}">
@@ -99,8 +101,8 @@
                                 </Trigger>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter TargetName="contentPresenter" Property="Opacity" Value="1"/>
-                                    <Setter Property="Background" Value="{StaticResource PrimaryHueMidBrush}" />
-                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="Background" Value="{DynamicResource AppChromeSelectedFillBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AppChromeSelectedTextBrush}" />
                                     <Setter TargetName="SelectionHighlightBorder" Property="Visibility" Value="Visible" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -111,7 +113,7 @@
 
             <!--#region Disable Dragablz tab ripple, shadow and change colors -->
             <Style x:Key="MaterialDesignTabablzControlStyle" TargetType="{x:Type dragablz:TabablzControl}" BasedOn="{StaticResource MaterialDesignTabablzControlStyle}">
-                <Setter Property="BorderBrush" Value="White" />
+                <Setter Property="BorderBrush" Value="{DynamicResource AppShellDividerBrush}" />
                 <Setter Property="ItemContainerStyle" Value="{StaticResource CMaterialDesignDragableTabItemStyle}" />
                 <Setter Property="Template">
                     <Setter.Value>
@@ -393,6 +395,7 @@
 
             <!-- Disable flat button corner rounding-->
             <Style x:Key="MaterialDesignFlatButtonNoRounding" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                <Setter Property="Foreground" Value="{DynamicResource AppChromeIdleBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">

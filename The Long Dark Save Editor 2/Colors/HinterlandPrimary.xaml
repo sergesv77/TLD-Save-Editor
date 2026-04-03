@@ -1,24 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:local="clr-namespace:The_Long_Dark_Save_Editor_2.Colors">
-    <Color x:Key="Primary50">#c52b1c</Color>
+    <Color x:Key="Primary50">#D9E5EC</Color>
     <Color x:Key="Primary50Foreground">#DD000000</Color>
-    <Color x:Key="Primary100">#c52b1c</Color>
+    <Color x:Key="Primary100">#C5D7E2</Color>
     <Color x:Key="Primary100Foreground">#DD000000</Color>
-    <Color x:Key="Primary200">#c52b1c</Color>
+    <Color x:Key="Primary200">#B1C8D7</Color>
     <Color x:Key="Primary200Foreground">#DD000000</Color>
-    <Color x:Key="Primary300">#c52b1c</Color>
+    <Color x:Key="Primary300">#9CB9CC</Color>
     <Color x:Key="Primary300Foreground">#DD000000</Color>
-    <Color x:Key="Primary400">#c52b1c</Color>
-    <Color x:Key="Primary400Foreground">#DD000000</Color>
-    <Color x:Key="Primary500">#c52b1c</Color>
-    <Color x:Key="Primary500Foreground">#DD000000</Color>
-    <Color x:Key="Primary600">#c52b1c</Color>
-    <Color x:Key="Primary600Foreground">#DD000000</Color>
-    <Color x:Key="Primary700">#c52b1c</Color>
-    <Color x:Key="Primary700Foreground">#DD000000</Color>
-    <Color x:Key="Primary800">#c52b1c</Color>
-    <Color x:Key="Primary800Foreground">#DD000000</Color>
-    <Color x:Key="Primary900">#c52b1c</Color>
-    <Color x:Key="Primary900Foreground">#DD000000</Color>
+    <Color x:Key="Primary400">#86AABD</Color>
+    <Color x:Key="Primary400Foreground">#DDFFFFFF</Color>
+    <Color x:Key="Primary500">#5E7F97</Color>
+    <Color x:Key="Primary500Foreground">#DDFFFFFF</Color>
+    <Color x:Key="Primary600">#567389</Color>
+    <Color x:Key="Primary600Foreground">#DDFFFFFF</Color>
+    <Color x:Key="Primary700">#4D677B</Color>
+    <Color x:Key="Primary700Foreground">#DDFFFFFF</Color>
+    <Color x:Key="Primary800">#455B6D</Color>
+    <Color x:Key="Primary800Foreground">#DDFFFFFF</Color>
+    <Color x:Key="Primary900">#3C5060</Color>
+    <Color x:Key="Primary900Foreground">#DDFFFFFF</Color>
 </ResourceDictionary>

@@ -14,6 +14,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             Foreground="{DynamicResource MaterialDesignBody}"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
         <converters:PrefabNameConverter x:Key="PrefabNameConverter" />
@@ -38,7 +39,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Width="100" Click="DeleteItemClicked" HorizontalAlignment="Left" Content="{x:Static p:Resources.Remove}"></Button>
                 </StackPanel>
-                <Rectangle Fill="#A6B8C3" Height="1" ></Rectangle>
+                <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" ></Rectangle>
                 <StackPanel Margin="10 10 0 0">
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
                         <Label Width="130" Content="{x:Static p:Resources.Condition}" />
@@ -135,7 +136,7 @@
                 <Button Margin="10 0 0 0" Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Click="RepairAllClicked" Content="{x:Static p:Resources.RepairAll}" />
                 <Button Margin="10 0 0 0" Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Click="RemoveAllClicked" Content="{x:Static p:Resources.RemoveAll}" />
             </StackPanel>
-            <Rectangle Fill="#A6B8C3" Height="1" ></Rectangle>
+            <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" ></Rectangle>
         </StackPanel>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -168,7 +169,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Rectangle Fill="#A6B8C3" Grid.Column="1"></Rectangle>
+            <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Grid.Column="1"></Rectangle>
             <ContentControl Name="ccItem" Grid.Column="2" Content="{Binding ElementName=ItemList, Path=SelectedValue}" />
         </Grid>
     </Grid>

@@ -11,6 +11,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             Foreground="{DynamicResource MaterialDesignBody}"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
         <converters:PercentageConverter x:Key="PercentageConverter" />

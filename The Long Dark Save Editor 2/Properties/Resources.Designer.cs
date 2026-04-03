@@ -5506,15 +5506,6 @@ namespace The_Long_Dark_Save_Editor_2.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Test branch.
-        /// </summary>
-        public static string TestBranch {
-            get {
-                return ResourceManager.GetString("TestBranch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Thirst.
         /// </summary>
         public static string Thirst {
