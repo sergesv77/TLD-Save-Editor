@@ -9,6 +9,13 @@ This fork exists to keep the editor working with the most recent known The Long 
 Current target support:
 - The Long Dark save version `v2.52.180167 S`
 
+What changed in this fork:
+- support for the most recent known The Long Dark save/profile format covered by this repository
+- updated save discovery for newer save locations and filenames
+- additional item-name coverage for newer in-game items
+- dark/light theme support with a user-selectable theme mode
+- refreshed Windows build and release packaging for current environments
+
 Project goals:
 - preserve the original editor experience as much as practical
 - update save/profile compatibility for newer game versions
@@ -16,8 +23,8 @@ Project goals:
 
 Repository notes:
 - this repo contains the maintained fork source code
+- maintenance and compatibility updates in this fork were developed with the help of an AI coding agent
+- AI assistance does not change original authorship credit for the project; credit for the original editor remains with FINDarkside
 - temporary local working notes, validation checklists, private TODO files, and other internal development artifacts are intentionally not part of the public repo
 - bundled third-party dependencies and notices are covered by the included license files in release packages
-
-Original public downloads:
-- ModDB: http://www.moddb.com/mods/the-long-dark-save-editor-2/downloads
+- the project is open to contributions and feedback to further improve compatibility and user experience
