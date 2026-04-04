@@ -34,6 +34,14 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
             return ItemCategory.Unknown;
         }
 
+        public static bool IsProtectedFromDelete(string name)
+        {
+            if (itemInfo.TryGetValue(name, out var info))
+                return info.preventDelete;
+
+            return false;
+        }
+
         static ItemDictionary()
         {
             // First aid
@@ -182,8 +190,8 @@ namespace The_Long_Dark_Save_Editor_2.Helpers
             AddItemInfo("GEAR_SodaGrape", ItemCategory.Food, @"{""FoodItem"": {""m_CaloriesRemainingProxy"": 250}}");
             AddItemInfo("GEAR_SodaOrange", ItemCategory.Food, @"{""FoodItem"": {""m_CaloriesRemainingProxy"": 250}}");
             AddItemInfo("GEAR_TomatoSoupCan", ItemCategory.Food, @"{""FoodItem"": {""m_CaloriesRemainingProxy"": 300}, ""SmashableItem"": {}}");
-            AddItemInfo("GEAR_WaterSupplyNotPotable", ItemCategory.Food, @"{""WaterSupply"":{""m_VolumeProxy"": 1}}", true);
-            AddItemInfo("GEAR_WaterSupplyPotable", ItemCategory.Food, @"{""WaterSupply"":{""m_VolumeProxy"": 1}}", true);
+            AddItemInfo("GEAR_WaterSupplyNotPotable", ItemCategory.Food, @"{""WaterSupply"":{""m_VolumeProxy"": 1}}", true, true);
+            AddItemInfo("GEAR_WaterSupplyPotable", ItemCategory.Food, @"{""WaterSupply"":{""m_VolumeProxy"": 1}}", true, true);
             AddItemInfo("GEAR_WolfQuarter", ItemCategory.Food, @"{""BodyHarvest"": {m_QuarterBagWasteMultiplier:2, m_MeatAvailableKG: 1, m_Condition: 100, m_DamageSide:{Value:""DamageSideRight""}}}");
             AddItemInfo("GEAR_BearQuarter", ItemCategory.Food, @"{""BodyHarvest"": {m_QuarterBagWasteMultiplier:2, m_MeatAvailableKG: 1, m_Condition: 100, m_DamageSide:{Value:""DamageSideRight""}}}");
             AddItemInfo("GEAR_StagQuarter", ItemCategory.Food, @"{""BodyHarvest"": {m_QuarterBagWasteMultiplier:2, m_MeatAvailableKG: 1, m_Condition: 100, m_DamageSide:{Value:""DamageSideRight""}}}");

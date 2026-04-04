@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using The_Long_Dark_Save_Editor_2.Helpers;
 using System.Linq;
 using The_Long_Dark_Save_Editor_2.Serialization;
@@ -199,6 +200,113 @@ namespace The_Long_Dark_Save_Editor_2.Game_data
 
     #region Inventory
 
+    internal static class InventoryAmountDisplayHelper
+    {
+        private const decimal FixedPointScale = 1000000000m;
+        private const decimal FixedPointThreshold = 1000000m;
+
+        public static string FormatLiquidAmount(string prefabName, PreservedNumber rawValue)
+        {
+            return FormatNumber(ToDisplayLiquidAmount(prefabName, rawValue));
+        }
+
+        public static PreservedNumber ParseLiquidAmount(string prefabName, PreservedNumber currentRawValue, string text)
+        {
+            if (!TryParseNonNegativeDecimal(text, out var displayValue))
+                return currentRawValue;
+
+            return FromDisplayLiquidAmount(prefabName, currentRawValue, displayValue);
+        }
+
+        public static string FormatLampFuelAmount(PreservedNumber rawValue)
+        {
+            return FormatNumber(ToDisplayLampFuelAmount(rawValue));
+        }
+
+        public static PreservedNumber ParseLampFuelAmount(PreservedNumber currentRawValue, string text)
+        {
+            if (!TryParseNonNegativeDecimal(text, out var displayValue))
+                return currentRawValue;
+
+            return FromDisplayLampFuelAmount(currentRawValue, displayValue);
+        }
+
+        public static string FormatWaterAmount(PreservedNumber rawValue)
+        {
+            if (UsesLargeScaledAmount(rawValue))
+                return FormatNumber(rawValue.Value < 0m ? 0m : rawValue.Value / FixedPointScale);
+
+            return FormatNumber(rawValue.Value < 0m ? 0m : rawValue.Value);
+        }
+
+        public static PreservedNumber ParseWaterAmount(PreservedNumber currentRawValue, string text)
+        {
+            if (!TryParseNonNegativeDecimal(text, out var displayValue))
+                return currentRawValue;
+
+            if (UsesLargeScaledAmount(currentRawValue))
+                return PreservedNumber.FromDecimal(decimal.Round(displayValue * FixedPointScale, 0, MidpointRounding.AwayFromZero), true);
+
+            return PreservedNumber.FromDecimal(displayValue);
+        }
+
+        private static decimal ToDisplayLiquidAmount(string prefabName, PreservedNumber rawValue)
+        {
+            if (UsesLargeScaledAmount(rawValue))
+                return rawValue.Value < 0m ? 0m : rawValue.Value / FixedPointScale;
+
+            return rawValue.Value < 0m ? 0m : rawValue.Value;
+        }
+
+        private static PreservedNumber FromDisplayLiquidAmount(string prefabName, PreservedNumber currentRawValue, decimal displayValue)
+        {
+            if (UsesLargeScaledAmount(currentRawValue))
+                return PreservedNumber.FromDecimal(decimal.Round(displayValue * FixedPointScale, 0, MidpointRounding.AwayFromZero), true);
+
+            return PreservedNumber.FromDecimal(displayValue);
+        }
+
+        private static decimal ToDisplayLampFuelAmount(PreservedNumber rawValue)
+        {
+            if (UsesLargeScaledAmount(rawValue))
+                return rawValue.Value < 0m ? 0m : rawValue.Value / FixedPointScale;
+
+            return rawValue.Value < 0m ? 0m : rawValue.Value;
+        }
+
+        private static PreservedNumber FromDisplayLampFuelAmount(PreservedNumber currentRawValue, decimal displayValue)
+        {
+            if (UsesLargeScaledAmount(currentRawValue))
+                return PreservedNumber.FromDecimal(decimal.Round(displayValue * FixedPointScale, 0, MidpointRounding.AwayFromZero), true);
+
+            return PreservedNumber.FromDecimal(displayValue);
+        }
+
+        private static bool TryParseNonNegativeDecimal(string text, out decimal value)
+        {
+            if (decimal.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out value)
+                || decimal.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
+            {
+                if (value < 0m)
+                    value = 0m;
+                return true;
+            }
+
+            value = 0m;
+            return false;
+        }
+
+        private static string FormatNumber(decimal value)
+        {
+            return value.ToString("0.#########", CultureInfo.CurrentCulture);
+        }
+
+        private static bool UsesLargeScaledAmount(PreservedNumber rawValue)
+        {
+            return rawValue.Value <= -FixedPointThreshold || rawValue.Value >= FixedPointThreshold;
+        }
+    }
+
     public class InventorySaveDataProxy
     {
         [Deserialize("m_SerializedItems")]
@@ -223,6 +331,62 @@ namespace The_Long_Dark_Save_Editor_2.Game_data
         public ItemCategory Category { get { return ItemDictionary.GetCategory(m_PrefabName); } }
         [JsonIgnore]
         public string InGameName { get { return ItemDictionary.GetInGameName(m_PrefabName); } }
+        [JsonIgnore]
+        public bool CanDelete { get { return !ItemDictionary.IsProtectedFromDelete(m_PrefabName); } }
+        [JsonIgnore]
+        public string LiquidAmountText
+        {
+            get
+            {
+                if (Gear?.LiquidItem == null)
+                    return string.Empty;
+
+                return InventoryAmountDisplayHelper.FormatLiquidAmount(m_PrefabName, Gear.LiquidItem.m_LiquidLitersProxy);
+            }
+            set
+            {
+                if (Gear?.LiquidItem == null)
+                    return;
+
+                Gear.LiquidItem.m_LiquidLitersProxy = InventoryAmountDisplayHelper.ParseLiquidAmount(m_PrefabName, Gear.LiquidItem.m_LiquidLitersProxy, value);
+            }
+        }
+        [JsonIgnore]
+        public string LampFuelAmountText
+        {
+            get
+            {
+                if (Gear?.KeroseneLampItem == null)
+                    return string.Empty;
+
+                return InventoryAmountDisplayHelper.FormatLampFuelAmount(Gear.KeroseneLampItem.m_CurrentFuelLitersProxy);
+            }
+            set
+            {
+                if (Gear?.KeroseneLampItem == null)
+                    return;
+
+                Gear.KeroseneLampItem.m_CurrentFuelLitersProxy = InventoryAmountDisplayHelper.ParseLampFuelAmount(Gear.KeroseneLampItem.m_CurrentFuelLitersProxy, value);
+            }
+        }
+        [JsonIgnore]
+        public string WaterAmountText
+        {
+            get
+            {
+                if (Gear?.WaterSupply == null)
+                    return string.Empty;
+
+                return InventoryAmountDisplayHelper.FormatWaterAmount(Gear.WaterSupply.m_VolumeProxy);
+            }
+            set
+            {
+                if (Gear?.WaterSupply == null)
+                    return;
+
+                Gear.WaterSupply.m_VolumeProxy = InventoryAmountDisplayHelper.ParseWaterAmount(Gear.WaterSupply.m_VolumeProxy, value);
+            }
+        }
     }
 
 
@@ -295,7 +459,7 @@ namespace The_Long_Dark_Save_Editor_2.Game_data
         public string m_MissionObjectSerialized { get; set; }
         [Deserialize("m_ResearchItemSerialized", true)]
         public ResearchItemSaveData ResearchItem { get; set; }
-        public float m_WeightKG { get; set; }
+        public PreservedNumber m_WeightKG { get; set; }
         public bool m_HarvestedByPlayer { get; set; }
         public bool m_IsInSatchel { get; set; }
         public int m_SatchelIndex { get; set; }
@@ -351,7 +515,7 @@ namespace The_Long_Dark_Save_Editor_2.Game_data
 
     public class LiquidItemSaveDataProxy
     {
-        public float m_LiquidLitersProxy { get; set; }
+        public PreservedNumber m_LiquidLitersProxy { get; set; }
         public EnumWrapper<LiquidQuality> m_LiquidQuality { get; set; }
     }
 
@@ -372,7 +536,7 @@ namespace The_Long_Dark_Save_Editor_2.Game_data
     public class KeroseneLampItemSaveDataProxy
     {
         public float m_HoursPlayed { get; set; }
-        public float m_CurrentFuelLitersProxy { get; set; }
+        public PreservedNumber m_CurrentFuelLitersProxy { get; set; }
         public bool m_OnProxy { get; set; }
     }
 
@@ -396,7 +560,7 @@ namespace The_Long_Dark_Save_Editor_2.Game_data
 
     public class WaterSupplySaveDataProxy
     {
-        public float m_VolumeProxy { get; set; }
+        public PreservedNumber m_VolumeProxy { get; set; }
     }
 
     public class BedSaveDataProxy

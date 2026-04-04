@@ -37,7 +37,7 @@
         <DataTemplate DataType="{x:Type gameData:InventoryItemSaveData}">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Width="100" Click="DeleteItemClicked" HorizontalAlignment="Left" Content="{x:Static p:Resources.Remove}"></Button>
+                    <Button Style="{StaticResource MaterialDesignFlatButtonNoRounding}" Width="100" Click="DeleteItemClicked" HorizontalAlignment="Left" Content="{x:Static p:Resources.Remove}" IsEnabled="{Binding CanDelete}"></Button>
                 </StackPanel>
                 <Rectangle Fill="{DynamicResource AppShellDividerBrush}" Height="1" ></Rectangle>
                 <StackPanel Margin="10 10 0 0">
@@ -61,13 +61,13 @@
                     <StackPanel Visibility="{Binding Gear.LiquidItem, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
                             <Label Width="130" Content="{x:Static p:Resources.AmountLiter}" />
-                            <TextBox Width="200" Text="{Binding Gear.LiquidItem.m_LiquidLitersProxy}"></TextBox>
+                            <TextBox Width="200" Text="{Binding LiquidAmountText}"></TextBox>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Visibility="{Binding Gear.KeroseneLampItem, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
                             <Label Width="130" Content="{x:Static p:Resources.AmountLiter}" />
-                            <TextBox Width="200" Text="{Binding Gear.KeroseneLampItem.m_CurrentFuelLitersProxy}"></TextBox>
+                            <TextBox Width="200" Text="{Binding LampFuelAmountText}"></TextBox>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Visibility="{Binding Gear.WeaponItem, Converter={StaticResource ObjectToVisibilityConverter}}">
@@ -79,7 +79,7 @@
                     <StackPanel Visibility="{Binding Gear.WaterSupply, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
                             <Label Width="130" Content="{x:Static p:Resources.AmountLiter}" />
-                            <TextBox Width="200" Text="{Binding Gear.WaterSupply.m_VolumeProxy}"></TextBox>
+                            <TextBox Width="200" Text="{Binding WaterAmountText}"></TextBox>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Visibility="{Binding Gear.InProgressItem, Converter={StaticResource ObjectToVisibilityConverter}}">

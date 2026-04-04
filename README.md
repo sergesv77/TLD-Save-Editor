@@ -13,7 +13,10 @@ What changed in this fork:
 - support for the most recent known The Long Dark save/profile format covered by this repository
 - updated save discovery for newer save locations and filenames
 - additional item-name coverage for newer in-game items
+- fixed issues with water and other liquid quantity handling in newer saves
 - dark/light theme support with a user-selectable theme mode
+- changed the application icon for the maintained fork release
+- redirected update checks to this fork's GitHub releases instead of the original backend/download flow
 - refreshed Windows build and release packaging for current environments
 
 Project goals:

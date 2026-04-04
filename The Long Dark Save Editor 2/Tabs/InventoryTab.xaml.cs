@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using The_Long_Dark_Save_Editor_2.Game_data;
@@ -42,8 +43,12 @@ namespace The_Long_Dark_Save_Editor_2.Tabs
 
         private void DeleteItemClicked(object sender, RoutedEventArgs e)
         {
+            var item = (InventoryItemSaveData)ItemList.SelectedValue;
+            if (item == null || !item.CanDelete)
+                return;
+
             var index = ItemList.SelectedIndex;
-            mainWindow.CurrentSave.Global.Inventory.Items.Remove((InventoryItemSaveData)ItemList.SelectedValue);
+            mainWindow.CurrentSave.Global.Inventory.Items.Remove(item);
             if (ItemList.Items.Count <= index)
                 ItemList.SelectedIndex = index - 1;
             else
@@ -52,7 +57,16 @@ namespace The_Long_Dark_Save_Editor_2.Tabs
 
         private void RemoveAllClicked(object sender, RoutedEventArgs e)
         {
-            mainWindow.CurrentSave.Global.Inventory.Items.Clear();
+            var items = mainWindow.CurrentSave.Global.Inventory.Items;
+            var nextSelection = items.FirstOrDefault(item => item.CanDelete) ?? items.FirstOrDefault();
+
+            for (var i = items.Count - 1; i >= 0; i--)
+            {
+                if (items[i].CanDelete)
+                    items.RemoveAt(i);
+            }
+
+            ItemList.SelectedItem = nextSelection != null && items.Contains(nextSelection) ? nextSelection : items.FirstOrDefault();
         }
 
         private void RepairAllClicked(object sender, RoutedEventArgs e)

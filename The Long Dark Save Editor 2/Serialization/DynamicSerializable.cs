@@ -66,10 +66,12 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
                     return token.Value<ulong>();
                 else if (t == typeof(float))
                     return token.Value<float>();
-                else if (t == typeof(long))
-                    return token.Value<long>();
+                else if (t == typeof(double))
+                    return token.Value<double>();
                 else if (t == typeof(decimal))
                     return token.Value<decimal>();
+                else if (t == typeof(PreservedNumber))
+                    return PreservedNumber.FromToken(token);
                 else
                     throw new Exception("Unsupported type " + t.FullName);
             }
@@ -189,7 +191,11 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
             else
             {
                 Type t = o.GetType();
-                if (ReflectionUtil.IsBoxed(o) || o is string)
+                if (o is PreservedNumber preservedNumber)
+                {
+                    result = preservedNumber.ToJsonValue();
+                }
+                else if (ReflectionUtil.IsBoxed(o) || o is string)
                 {
                     result = o;
                 }
@@ -326,7 +332,11 @@ namespace The_Long_Dark_Save_Editor_2.Serialization
                 return JValue.CreateNull();
 
             var comparisonValue = Reconstruct(value, null, true, false);
-            return comparisonValue == null ? JValue.CreateNull() : JToken.FromObject(comparisonValue);
+            if (comparisonValue == null)
+                return JValue.CreateNull();
+            if (comparisonValue is JToken token)
+                return token;
+            return JToken.FromObject(comparisonValue);
         }
 
         private string MemberToName(MemberInfo m)

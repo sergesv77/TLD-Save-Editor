@@ -442,7 +442,7 @@
     <value>Water (Potable)</value>
   </data>
   <data name="GEAR_Accelerant" xml:space="preserve">
-    <value>Accelerant</value>
+    <value>Fire Accelerant</value>
   </data>
   <data name="GEAR_Arrow" xml:space="preserve">
     <value>Simple Arrow</value>
@@ -715,10 +715,10 @@
     <value>Advanced Guns Guns Guns!</value>
   </data>
   <data name="GEAR_AccelerantKerosene" xml:space="preserve">
-    <value>Accelerant</value>
+    <value>Fire Accelerant</value>
   </data>
   <data name="GEAR_AccelerantMedium" xml:space="preserve">
-    <value>Accelerant</value>
+    <value>Fire Accelerant</value>
   </data>
   <data name="GEAR_BoltCutters" xml:space="preserve">
     <value>Bolt Cutters</value>

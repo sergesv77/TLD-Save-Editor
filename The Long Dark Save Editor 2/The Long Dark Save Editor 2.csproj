@@ -8,7 +8,8 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>The_Long_Dark_Save_Editor_2</RootNamespace>
-    <AssemblyName>The Long Dark Save Editor 2.1</AssemblyName>
+    <AssemblyName>The Long Dark Save Editor 2.3</AssemblyName>
+    <ApplicationIcon>Assets\App.ico</ApplicationIcon>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -140,6 +141,8 @@
     <Compile Include="Serialization\CachedReflection.cs" />
     <Compile Include="Serialization\DeserializeAttribute.cs" />
     <Compile Include="Serialization\DynamicSerializable.cs" />
+    <Compile Include="Serialization\PreservedNumber.cs" />
+    <Compile Include="Serialization\PreservedNumberJsonConverter.cs" />
     <Compile Include="Helpers\BindableBase.cs" />
     <Compile Include="Helpers\CLZF.cs" />
     <Compile Include="Converters\CategoryToItemsConverter.cs" />
@@ -328,6 +331,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\AshCanyonRegion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\App.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets')" />

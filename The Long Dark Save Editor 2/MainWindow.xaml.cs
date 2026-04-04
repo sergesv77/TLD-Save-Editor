@@ -21,8 +21,10 @@ namespace The_Long_Dark_Save_Editor_2
 
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private const string GitHubLatestReleaseApiUrl = "https://api.github.com/repos/sergesv77/TLD-Save-Editor/releases/latest";
+
         public static MainWindow Instance { get; set; }
-        public static VersionData Version { get { return new VersionData() { version = "2.20" }; } }
+        public static VersionData Version { get { return new VersionData() { version = "2.3" }; } }
 
         private GameSave currentSave;
         public GameSave CurrentSave { get { return currentSave; } set { SetPropertyField(ref currentSave, value); } }
@@ -96,9 +98,8 @@ namespace The_Long_Dark_Save_Editor_2
         {
             Debug.WriteLine("Window loaded");
 #if !DEBUG
-            
+             
             CheckForUpdates();
-            LogOpen();
 
             if (!Properties.Settings.Default.BugReportWarningShown)
             {
@@ -189,53 +190,61 @@ namespace The_Long_Dark_Save_Editor_2
 
         async public void CheckForUpdates()
         {
-
             try
             {
-                WebClient webClient = new WebClient();
-                string json = await webClient.DownloadStringTaskAsync("https://tld-save-editor-2.firebaseio.com/Changelog.json");
+                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-                List<VersionData> versions = JsonConvert.DeserializeObject<List<VersionData>>(json);
-                if (versions[versions.Count - 1] > Version)
+                using (WebClient webClient = new WebClient())
                 {
-                    var newerVersions = versions.Where(version => version > Version).ToList();
+                    webClient.Headers[HttpRequestHeader.UserAgent] = "TLD-Save-Editor/" + Version;
+                    webClient.Headers[HttpRequestHeader.Accept] = "application/vnd.github+json";
 
-                    SnackBar.MessageQueue.Enqueue("New version available", "Download", () =>
+                    string json = await webClient.DownloadStringTaskAsync(GitHubLatestReleaseApiUrl);
+                    GitHubReleaseData latestRelease = JsonConvert.DeserializeObject<GitHubReleaseData>(json);
+                    if (latestRelease == null || latestRelease.draft || latestRelease.prerelease)
+                        return;
+
+                    string latestVersion = NormalizeReleaseVersion(latestRelease.tag_name);
+                    if (string.IsNullOrWhiteSpace(latestVersion))
+                        return;
+
+                    VersionData releasedVersion = new VersionData() { version = latestVersion };
+                    if (releasedVersion > Version)
                     {
-                        try
+                        SnackBar.MessageQueue.Enqueue("New version available", "Download", () =>
                         {
-                            string url = newerVersions[newerVersions.Count - 1].url;
-                            Uri uri = new Uri(url);
-                            if (string.Equals(uri.Host, "www.moddb.com", StringComparison.OrdinalIgnoreCase) ||
-                                string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase))
+                            try
                             {
-                                Process.Start(url);
+                                if (Uri.TryCreate(latestRelease.html_url, UriKind.Absolute, out Uri uri) &&
+                                    string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
+                                }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    });
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                            }
+                        });
+                    }
                 }
             }
             catch (Exception ex)
             {
-                SnackBar.MessageQueue.Enqueue("Failed to check for new versions: " + ex.GetType().FullName);
+                Debug.WriteLine(ex);
             }
         }
 
-        async public void LogOpen()
+        private static string NormalizeReleaseVersion(string tagName)
         {
-            try
-            {
-                WebClient webClient = new WebClient();
-                await webClient.DownloadStringTaskAsync("https://us-central1-tld-save-editor-2.cloudfunctions.net/editorOpened?version=" + Version);
-            }
-            catch (Exception ex)
-            {
+            if (string.IsNullOrWhiteSpace(tagName))
+                return null;
 
-            }
+            string normalized = tagName.Trim();
+            if (normalized.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+                normalized = normalized.Substring(1);
+
+            return normalized;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -368,6 +377,14 @@ namespace The_Long_Dark_Save_Editor_2
                 appDataFileWatcher.Path = watcherPath;
                 appDataFileWatcher.EnableRaisingEvents = true;
             }
+        }
+
+        private sealed class GitHubReleaseData
+        {
+            public string tag_name { get; set; }
+            public string html_url { get; set; }
+            public bool draft { get; set; }
+            public bool prerelease { get; set; }
         }
     }
 
