@@ -1,4 +1,4 @@
-# TLD-Save-Editor
+# The Long Dark Save Editor
 
 Fork of the original `TLD-Save-Editor` by FINDarkside.
 
